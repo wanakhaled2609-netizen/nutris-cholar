@@ -1,0 +1,449 @@
+/* NutriScholar - Nutrition Management System */
+/* CSS Stylesheet */
+
+:root {
+    --primary: #2c3e50;
+    --secondary: #27ae60;
+    --accent: #3498db;
+    --danger: #e74c3c;
+    --warning: #e67e22;
+    --success: #27ae60;
+    --bg-color: #cfe1b9;
+    --input-bg: #ffffff;
+    --border-color: #99aaa0;
+    --light-bg: #f9f9f9;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html, body {
+    height: 100%;
+    width: 100%;
+}
+
+body {
+    font-family: 'Cairo', sans-serif;
+    background-color: var(--bg-color);
+    display: flex;
+    min-height: 100vh;
+    direction: rtl;
+}
+
+.container {
+    display: flex;
+    width: 100%;
+    gap: 0;
+}
+
+.portal {
+    flex: 1;
+    padding: 40px;
+    transition: all 0.3s ease;
+    background-color: rgba(255, 255, 255, 0.9);
+}
+
+.patient-portal {
+    border-left: 3px solid var(--secondary);
+    background-color: rgba(255, 255, 255, 0.95);
+    box-shadow: inset -2px 0 10px rgba(0, 0, 0, 0.05);
+}
+
+.specialist-portal {
+    border-left: 3px solid var(--accent);
+    background-color: rgba(255, 255, 255, 0.95);
+}
+
+h2 {
+    color: var(--primary);
+    border-bottom: 4px solid var(--secondary);
+    padding-bottom: 15px;
+    margin-bottom: 30px;
+    font-size: 1.8em;
+    font-weight: 700;
+}
+
+h3 {
+    color: var(--primary);
+    border-bottom: 3px solid var(--accent);
+    padding-bottom: 12px;
+    margin-bottom: 20px;
+    font-size: 1.3em;
+}
+
+h4 {
+    color: var(--primary);
+    margin-top: 20px;
+    margin-bottom: 15px;
+}
+
+.form-group {
+    margin-bottom: 20px;
+    animation: slideIn 0.3s ease;
+}
+
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: bold;
+    color: var(--primary);
+    font-size: 0.95em;
+}
+
+input, select, textarea {
+    width: 100%;
+    padding: 12px;
+    border: 2px solid var(--border-color);
+    border-radius: 8px;
+    font-size: 16px;
+    background-color: var(--input-bg);
+    font-family: 'Cairo', sans-serif;
+    color: var(--primary);
+    transition: all 0.3s ease;
+}
+
+input:focus, select:focus, textarea:focus {
+    outline: none;
+    border-color: var(--accent);
+    box-shadow: 0 0 8px rgba(52, 152, 219, 0.2);
+    background-color: #f8fbff;
+}
+
+textarea {
+    resize: vertical;
+    min-height: 80px;
+}
+
+/* Button Styles */
+button {
+    background-color: var(--secondary);
+    color: white;
+    padding: 15px 20px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 16px;
+    font-weight: bold;
+    width: 100%;
+    margin-top: 10px;
+    transition: all 0.3s ease;
+    font-family: 'Cairo', sans-serif;
+}
+
+button:hover {
+    background-color: #229954;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(39, 174, 96, 0.3);
+}
+
+button:active {
+    transform: translateY(0);
+}
+
+button:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+.btn-pdf {
+    background-color: var(--warning);
+    margin-top: 15px;
+}
+
+.btn-pdf:hover {
+    background-color: #d35400;
+}
+
+/* Alert and Result Boxes */
+.result-box, .alert-box {
+    padding: 15px;
+    border-radius: 8px;
+    margin-top: 10px;
+    display: none;
+    font-weight: 500;
+    animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+.alert-box.success {
+    background-color: #e8f5e9;
+    color: #2e7d32;
+    border-left: 4px solid var(--success);
+}
+
+.alert-box.warning {
+    background-color: #fff3e0;
+    color: #e65100;
+    border-left: 4px solid var(--warning);
+}
+
+.alert-box.danger {
+    background-color: #ffebee;
+    color: #c62828;
+    border-left: 4px solid var(--danger);
+}
+
+/* Diet Plan Result */
+.diet-plan {
+    margin-top: 30px;
+    padding: 30px;
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+    display: none;
+    animation: slideUp 0.5s ease;
+}
+
+@keyframes slideUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.nutrient-badge {
+    background: linear-gradient(135deg, #f1f2f6 0%, #e9ecef 100%);
+    border-right: 5px solid var(--accent);
+    padding: 15px;
+    margin: 10px 0;
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--primary);
+    border-radius: 6px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+#patientInfoSummary {
+    background: linear-gradient(135deg, #e8f5e9 0%, #f1f8e9 100%);
+    color: #1b5e20;
+    padding: 15px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+    border-left: 4px solid var(--success);
+    font-size: 0.95em;
+}
+
+/* Food Lists */
+.food-list {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+    margin-top: 20px;
+    margin-bottom: 20px;
+}
+
+.allowed, .restricted {
+    padding: 15px;
+    border-radius: 8px;
+    font-size: 0.95em;
+    line-height: 1.6;
+}
+
+.allowed {
+    color: #2e7d32;
+    background: linear-gradient(135deg, #e8f5e9 0%, #f1f8e9 100%);
+    border-left: 4px solid var(--success);
+}
+
+.restricted {
+    color: #c62828;
+    background: linear-gradient(135deg, #ffebee 0%, #ffcdd2 100%);
+    border-left: 4px solid var(--danger);
+}
+
+.allowed b, .restricted b {
+    display: block;
+    margin-bottom: 10px;
+    font-size: 1.1em;
+}
+
+#aiMeals {
+    background: var(--light-bg);
+    padding: 15px;
+    border-radius: 8px;
+    line-height: 1.8;
+    color: var(--primary);
+}
+
+/* Flex Row for Multiple Inputs */
+.flex-row {
+    display: flex;
+    gap: 10px;
+}
+
+.flex-row .form-group {
+    flex: 1;
+    margin-bottom: 20px;
+}
+
+/* Horizontal Rule */
+hr {
+    border: none;
+    border-top: 2px solid #ecf0f1;
+    margin: 20px 0;
+}
+
+/* Error Message */
+.error-message {
+    color: var(--danger);
+    font-size: 0.9em;
+    margin-top: 5px;
+    display: none;
+}
+
+.error-message.show {
+    display: block;
+}
+
+/* Loading Spinner */
+.spinner {
+    display: inline-block;
+    width: 16px;
+    height: 16px;
+    border: 3px solid rgba(52, 152, 219, 0.3);
+    border-top-color: var(--accent);
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .container {
+        flex-direction: column;
+    }
+
+    .portal {
+        padding: 20px;
+        border-left: none;
+        border-bottom: 3px solid var(--secondary);
+    }
+
+    .patient-portal {
+        border-left: none;
+        border-bottom: 3px solid var(--secondary);
+    }
+
+    .specialist-portal {
+        border-left: none;
+        border-bottom: 3px solid var(--accent);
+    }
+
+    h2 {
+        font-size: 1.5em;
+    }
+
+    .food-list {
+        grid-template-columns: 1fr;
+        gap: 15px;
+    }
+
+    .flex-row {
+        flex-direction: column;
+        gap: 0;
+    }
+
+    .flex-row .form-group {
+        margin-bottom: 20px;
+    }
+
+    button {
+        padding: 12px 16px;
+        font-size: 14px;
+    }
+
+    .diet-plan {
+        padding: 15px;
+    }
+}
+
+@media (max-width: 480px) {
+    body {
+        font-size: 14px;
+    }
+
+    .portal {
+        padding: 15px;
+    }
+
+    h2 {
+        font-size: 1.3em;
+        padding-bottom: 10px;
+        margin-bottom: 20px;
+    }
+
+    h3 {
+        font-size: 1.1em;
+    }
+
+    input, select, textarea {
+        padding: 10px;
+        font-size: 14px;
+    }
+
+    button {
+        padding: 10px;
+        font-size: 13px;
+    }
+}
+
+/* Print Styles for PDF */
+@media print {
+    body {
+        background: white;
+        margin: 0;
+        padding: 0;
+    }
+
+    .container {
+        flex-direction: column;
+    }
+
+    .portal {
+        padding: 0;
+        border: none;
+        page-break-inside: avoid;
+    }
+
+    .diet-plan {
+        box-shadow: none;
+        border: 1px solid #ddd;
+    }
+
+    button {
+        display: none;
+    }
+}
