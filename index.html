@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>NutriScholar | مساعد التغذية السريري المطور</title>
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;700&display=swap" rel="stylesheet">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     <style>
         :root {
             --primary: #2c3e50;
@@ -255,17 +254,18 @@
 
     function saveAsPDF() {
         const report = document.getElementById('pdfContent');
-        const wrapper = document.getElementById('dietResult');
-
         // guard against empty/hidden content
         if (!report || report.textContent.trim() === "") {
             alert('الرجاء إنشاء الخطة أولاً ثم حاول حفظ PDF.');
             return;
         }
 
-        // temporarily ensure the element is visible
-        const prevDisplay = wrapper.style.display;
-        wrapper.style.display = 'block';
+        // html2pdf has problems when the element is hidden; clone and force visibility
+        const clone = report.cloneNode(true);
+        clone.style.display = 'block';
+        clone.style.position = 'absolute';
+        clone.style.left = '-9999px';
+        document.body.appendChild(clone);
 
         const opt = {
             margin: 10,
@@ -275,10 +275,15 @@
             jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
         };
 
-        html2pdf().set(opt).from(report).save()
-            .finally(() => {
-                // restore original display state
-                wrapper.style.display = prevDisplay;
+        // use callback style and remove clone when done
+        html2pdf(clone, opt)
+            .then(() => {
+                document.body.removeChild(clone);
+            })
+            .catch(err => {
+                console.error('PDF generation error', err);
+                alert('حدث خطأ أثناء إنشاء PDF. تحقق من وحدة التحكم.');
+                document.body.removeChild(clone);
             });
     }
 </script>
