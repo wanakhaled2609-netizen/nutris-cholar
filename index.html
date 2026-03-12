@@ -254,7 +254,19 @@
     }
 
     function saveAsPDF() {
-        const element = document.getElementById('pdfContent');
+        const report = document.getElementById('pdfContent');
+        const wrapper = document.getElementById('dietResult');
+
+        // guard against empty/hidden content
+        if (!report || report.textContent.trim() === "") {
+            alert('الرجاء إنشاء الخطة أولاً ثم حاول حفظ PDF.');
+            return;
+        }
+
+        // temporarily ensure the element is visible
+        const prevDisplay = wrapper.style.display;
+        wrapper.style.display = 'block';
+
         const opt = {
             margin: 10,
             filename: 'NutriScholar_Report.pdf',
@@ -262,7 +274,12 @@
             html2canvas: { scale: 2, useCORS: true },
             jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
         };
-        html2pdf().set(opt).from(element).save();
+
+        html2pdf().set(opt).from(report).save()
+            .finally(() => {
+                // restore original display state
+                wrapper.style.display = prevDisplay;
+            });
     }
 </script>
 
