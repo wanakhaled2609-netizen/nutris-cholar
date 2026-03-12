@@ -4,90 +4,59 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>NutriScholar | مساعد التغذية السريري المطور</title>
+    
+    <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;700&display=swap" rel="stylesheet">
-    <style>
-        :root {
-            --primary: #2c3e50;
-            --secondary: #27ae60;
-            --accent: #3498db;
-            --danger: #e74c3c;
-            --bg-color: #cfe1b9; 
-            --input-bg: #ffffff; 
-        }
-
-        body {
-            font-family: 'Cairo', sans-serif;
-            background-color: var(--bg-color);
-            margin: 0;
-            display: flex;
-            min-height: 100vh;
-        }
-
-        .container { display: flex; width: 100%; }
-        .portal { flex: 1; padding: 40px; transition: 0.3s; }
-        .patient-portal { background-color: rgba(255, 255, 255, 0.3); border-left: 2px solid rgba(0,0,0,0.1); }
-        
-        h2, h3 { color: var(--primary); border-bottom: 3px solid var(--secondary); padding-bottom: 10px; margin-bottom: 30px; }
-        .form-group { margin-bottom: 20px; }
-        label { display: block; margin-bottom: 8px; font-weight: bold; color: #333; }
-        
-        input, select, textarea { 
-            width: 100%; padding: 12px; border: 1px solid #99aaa0; 
-            border-radius: 8px; box-sizing: border-box; font-size: 16px; 
-            background-color: var(--input-bg); font-family: 'Cairo';
-        }
-
-        .result-box, .alert-box { padding: 15px; border-radius: 8px; margin-top: 10px; display: none; font-weight: bold; }
-        
-        button {
-            background-color: var(--secondary); color: white; padding: 15px;
-            border: none; border-radius: 8px; cursor: pointer; font-size: 18px;
-            font-weight: bold; width: 100%; margin-top: 10px; transition: 0.3s;
-        }
-        .btn-pdf { background-color: #e67e22; margin-top: 10px; }
-        button:hover { opacity: 0.9; }
-
-        .diet-plan {
-            margin-top: 30px; padding: 25px; background: white;
-            border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); display: none;
-        }
-
-        .nutrient-badge {
-            background: #f1f2f6; border-right: 4px solid var(--accent);
-            padding: 10px; margin: 5px 0; font-size: 14px;
-        }
-
-        .food-list { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 15px; }
-        .allowed { color: #27ae60; background: #e8f5e9; padding: 10px; border-radius: 5px; }
-        .restricted { color: #e74c3c; background: #ffebee; padding: 10px; border-radius: 5px; }
-
-        @media (max-width: 768px) { .container { flex-direction: column; } .food-list { grid-template-columns: 1fr; } }
-    </style>
+    
+    <!-- External CSS -->
+    <link rel="stylesheet" href="styles.css">
+    
+    <!-- html2pdf Library for PDF generation -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 </head>
 <body>
 
 <div class="container">
+    <!-- Patient Portal -->
     <div class="portal patient-portal">
-        <h2>بوابة المريض</h2>
+        <h2>🏥 بوابة المريض</h2>
+        
         <div class="form-group">
-            <label>الاسم الكامل</label>
-            <input type="text" id="pName" placeholder="أدخل الاسم">
+            <label>📝 الاسم الكامل</label>
+            <input type="text" id="pName" placeholder="أدخل الاسم الكامل" required>
         </div>
-        <div style="display: flex; gap: 10px;">
-            <div class="form-group" style="flex: 1;"><label>العمر</label><input type="number" id="pAge"></div>
-            <div class="form-group" style="flex: 1;"><label>الوزن (كجم)</label><input type="number" id="pWeight"></div>
-            <div class="form-group" style="flex: 1;"><label>الطول (سم)</label><input type="number" id="pHeight"></div>
+        
+        <div class="flex-row">
+            <div class="form-group">
+                <label>🎂 العمر</label>
+                <input type="number" id="pAge" placeholder="سنة" min="1" max="150" required>
+                <span class="error-message" id="ageError"></span>
+            </div>
+            <div class="form-group">
+                <label>⚖️ الوزن</label>
+                <input type="number" id="pWeight" placeholder="كجم" min="20" max="500" step="0.1" required>
+                <span class="error-message" id="weightError"></span>
+            </div>
+            <div class="form-group">
+                <label>📏 الطول</label>
+                <input type="number" id="pHeight" placeholder="سم" min="100" max="250" step="0.1" required>
+                <span class="error-message" id="heightError"></span>
+            </div>
         </div>
+        
         <div class="form-group">
-            <label>الجنس</label>
-            <select id="gender" onchange="checkHealthStatus()">
+            <label>👥 الجنس</label>
+            <select id="gender" onchange="checkHealthStatus()" required>
+                <option value="">اختر الجنس</option>
                 <option value="male">ذكر</option>
                 <option value="female">أنثى</option>
             </select>
         </div>
+        
         <div class="form-group">
-            <label>تحديد المرض المصاحب</label>
-            <select id="disease">
+            <label>🏥 تحديد المرض المصاحب</label>
+            <select id="disease" required>
+                <option value="">اختر الحالة</option>
                 <option value="none">لا يوجد (شخص صحي)</option>
                 <option value="hypertension">ارتفاع ضغط الدم</option>
                 <option value="diabetes_1">مريض سكر (النوع الأول)</option>
@@ -96,75 +65,162 @@
                 <option value="diabetes_heart">مريض سكر مع مرض في القلب</option>
             </select>
         </div>
+        
         <div class="form-group">
-            <label>مستوى النشاط البدني</label>
-            <select id="activityLevel">
+            <label>🏃 مستوى النشاط البدني</label>
+            <select id="activityLevel" required>
+                <option value="">اختر مستوى النشاط</option>
                 <option value="1.2">خامل (قليل أو لا يمارس الرياضة)</option>
                 <option value="1.375">نشاط خفيف (رياضة 1-3 أيام/أسبوع)</option>
                 <option value="1.55">نشاط متوسط (رياضة 3-5 أيام/أسبوع)</option>
                 <option value="1.725">نشاط عالٍ (رياضة يومية شاقة)</option>
             </select>
         </div>
+        
         <div class="form-group">
-            <label>تشخيصات أخرى</label>
-            <textarea id="otherDiagnosis" rows="2"></textarea>
+            <label>📋 تشخيصات وملاحظات أخرى</label>
+            <textarea id="otherDiagnosis" placeholder="أي معلومات إضافية عن المريض..." rows="2"></textarea>
         </div>
     </div>
 
+    <!-- Specialist Portal -->
     <div class="portal specialist-portal">
-        <h2>لوحة تحكم الأخصائي</h2>
+        <h2>👨‍⚕️ لوحة تحكم الأخصائي</h2>
+        
         <div class="form-group">
-            <label>1. طول الذراع (سم) -> المنتصف: <span id="midValue" style="color:var(--secondary)">0</span> سم</label>
-            <input type="number" id="armLength" oninput="calculateMidpoint()">
+            <label>1️⃣ طول الذراع (سم) → المنتصف: <span id="midValue" style="color:var(--secondary); font-weight: bold;">0</span> سم</label>
+            <input type="number" id="armLength" placeholder="أدخل طول الذراع" min="20" max="100" step="0.1" oninput="calculateMidpoint()">
         </div>
+        
         <div class="form-group">
-            <label>2. محيط الذراع (MUAC) - سم</label>
-            <input type="number" id="muac" oninput="checkHealthStatus()">
+            <label>2️⃣ محيط الذراع (MUAC) - سم</label>
+            <input type="number" id="muac" placeholder="سم" min="15" max="50" step="0.1" oninput="checkHealthStatus()">
             <div id="muacAlert" class="alert-box"></div>
         </div>
+        
         <div class="form-group">
-            <label>3. محيط الخصر (سم)</label>
-            <input type="number" id="waist" oninput="checkHealthStatus()">
+            <label>3️⃣ محيط الخصر (سم)</label>
+            <input type="number" id="waist" placeholder="سم" min="40" max="200" step="0.1" oninput="checkHealthStatus()">
             <div id="waistAlert" class="alert-box"></div>
         </div>
 
-        <button onclick="generateDietPlan()">إنشاء الخطة والوجبات</button>
+        <button onclick="generateDietPlan()">✨ إنشاء الخطة والوجبات</button>
 
+        <!-- Diet Result Section -->
         <div id="dietResult" class="diet-plan">
             <div id="pdfContent">
                 <h3 id="dietTitle"></h3>
-                <div id="patientInfoSummary" style="margin-bottom: 15px; font-size: 0.9em; color: #555; background: #f9f9f9; padding: 10px; border-radius: 8px;"></div>
+                
+                <div id="patientInfoSummary"></div>
+                
+                <h4>📊 المعلومات الغذائية:</h4>
                 <div id="nutrientInfo"></div>
-                <div id="dietContent"></div>
+                
+                <h4>🍽️ الغذاء المسموح والممنوع:</h4>
                 <div class="food-list" id="foodLists"></div>
+                
                 <hr>
-                <h4>اقتراحات الوجبات اليومية:</h4>
+                
+                <h4>🌟 اقتراحات الوجبات اليومية:</h4>
                 <div id="aiMeals"></div>
             </div>
-            <button class="btn-pdf" onclick="saveAsPDF()">حفظ التقرير كـ PDF</button>
+            
+            <button class="btn-pdf" onclick="saveAsPDF()">📥 حفظ التقرير كـ PDF</button>
+            <button style="background-color: #9b59b6; margin-top: 10px;" onclick="printPlan()">🖨️ طباعة التقرير</button>
         </div>
     </div>
 </div>
 
 <script>
+    // Global variables
+    let currentPlan = null;
+
+    /**
+     * Calculate the midpoint of arm length
+     */
     function calculateMidpoint() {
         let length = document.getElementById('armLength').value;
         document.getElementById('midValue').innerText = length ? (length / 2).toFixed(1) : 0;
     }
 
+    /**
+     * Check health status and display warnings
+     */
     function checkHealthStatus() {
         let muac = parseFloat(document.getElementById('muac').value);
         let gender = document.getElementById('gender').value;
         let muacAlert = document.getElementById('muacAlert');
-        if(muac > 0) {
-            let status = (gender === 'male' ? (muac > 28 ? "سمنة" : (muac == 28 ? "طبيعي" : "نحافة")) : (muac > 25 ? "سمنة" : (muac == 25 ? "طبيعي" : "نحافة")));
+        
+        if (muac > 0 && gender) {
+            let status;
+            if (gender === 'male') {
+                status = muac > 28 ? "سمنة" : (muac == 28 ? "طبيعي" : "نحافة");
+            } else {
+                status = muac > 25 ? "سمنة" : (muac == 25 ? "طبيعي" : "نحافة");
+            }
+            
             muacAlert.style.display = 'block';
-            muacAlert.innerText = `حالة الجسم: ${status}`;
-            muacAlert.style.backgroundColor = status === "طبيعي" ? "#e8f5e9" : "#ffebee";
+            muacAlert.innerText = `📊 حالة الجسم: ${status}`;
+            muacAlert.className = 'alert-box ' + (status === "طبيعي" ? "success" : status === "سمنة" ? "warning" : "danger");
         }
     }
 
+    /**
+     * Validate patient data
+     */
+    function validatePatientData() {
+        const age = parseFloat(document.getElementById('pAge').value);
+        const weight = parseFloat(document.getElementById('pWeight').value);
+        const height = parseFloat(document.getElementById('pHeight').value);
+        const gender = document.getElementById('gender').value;
+        const disease = document.getElementById('disease').value;
+        const activityLevel = document.getElementById('activityLevel').value;
+
+        let isValid = true;
+
+        // Clear previous errors
+        document.querySelectorAll('.error-message').forEach(el => el.classList.remove('show'));
+
+        // Validate age
+        if (!age || age < 1 || age > 150) {
+            document.getElementById('ageError').innerText = 'العمر يجب أن يكون بين 1 و 150';
+            document.getElementById('ageError').classList.add('show');
+            isValid = false;
+        }
+
+        // Validate weight
+        if (!weight || weight < 20 || weight > 500) {
+            document.getElementById('weightError').innerText = 'الوزن يجب أن يكون بين 20 و 500 كجم';
+            document.getElementById('weightError').classList.add('show');
+            isValid = false;
+        }
+
+        // Validate height
+        if (!height || height < 100 || height > 250) {
+            document.getElementById('heightError').innerText = 'الطول يجب أن يكون بين 100 و 250 سم';
+            document.getElementById('heightError').classList.add('show');
+            isValid = false;
+        }
+
+        // Check all required fields
+        if (!gender || !disease || !activityLevel) {
+            alert('يرجى إكمال جميع البيانات المطلوبة.');
+            isValid = false;
+        }
+
+        return isValid;
+    }
+
+    /**
+     * Generate diet plan using PHP backend API
+     */
     function generateDietPlan() {
+        // Validate data first
+        if (!validatePatientData()) {
+            alert('يرجى تصحيح البيانات المدخلة.');
+            return;
+        }
+
         const name = document.getElementById('pName').value || "المريض";
         const age = parseFloat(document.getElementById('pAge').value);
         const weight = parseFloat(document.getElementById('pWeight').value);
@@ -173,31 +229,69 @@
         const disease = document.getElementById('disease').value;
         const activity = parseFloat(document.getElementById('activityLevel').value);
 
-        if (!weight || !height || !age) {
-            alert("يرجى إكمال البيانات الحيوية للمريض أولاً.");
-            return;
-        }
+        // Show loading indicator
+        const btn = event.target;
+        const originalText = btn.innerText;
+        btn.disabled = true;
+        btn.innerHTML = '<span class="spinner"></span> جاري المعالجة...';
 
-        // 1. حساب مؤشر كتلة الجسم BMI
+        // Prepare data for API
+        const calculationData = {
+            action: 'calculateNutrition',
+            weight: weight,
+            height: height,
+            age: age,
+            gender: gender,
+            disease: disease,
+            activity: activity
+        };
+
+        // Call PHP API
+        fetch('api.php?action=calculateNutrition', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+            },
+            body: new URLSearchParams(calculationData)
+        })
+        .then(response => response.json())
+        .then(result => {
+            if (result.success) {
+                displayDietPlan(name, result, disease);
+                generateMealSuggestions(disease, result.tdee);
+            } else {
+                alert('خطأ: ' + result.message);
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            // Fallback to client-side calculation
+            displayDietPlanFallback(name, age, weight, height, gender, disease, activity);
+        })
+        .finally(() => {
+            btn.disabled = false;
+            btn.innerText = originalText;
+        });
+    }
+
+    /**
+     * Fallback: Calculate diet plan on client side if server is unavailable
+     */
+    function displayDietPlanFallback(name, age, weight, height, gender, disease, activity) {
         const bmi = (weight / ((height / 100) ** 2)).toFixed(1);
         let bmiStatus = (bmi < 18.5) ? "نحافة" : (bmi < 25) ? "وزن مثالي" : (bmi < 30) ? "زيادة وزن" : "سمنة";
 
-        // 2. حساب الوزن المثالي (IBW) بناءً على المعادلة الجديدة
-        // المعادلة: (الطول - 100) - ((الطول - 150) / (4 للذكر أو 2 للأنثى))
         let factor = (gender === 'male') ? 4 : 2;
         let ibw = (height - 100) - ((height - 150) / factor);
 
-        // 3. تحديد الوزن المستخدم في الحسابات (IBW أو AjBW)
         let usedWeight = ibw;
         let weightTypeLabel = "الوزن المثالي (IBW)";
 
         if (bmi < 18.5 || bmi >= 25) {
-            // استخدام قانون AjBW
             usedWeight = ibw + 0.4 * (weight - ibw);
             weightTypeLabel = "الوزن المعدل (AjBW)";
         }
 
-        // 4. حساب BMR بناءً على الوزن الناتج (usedWeight)
         let bmr;
         if (gender === 'male') {
             bmr = (10 * usedWeight) + (6.25 * height) - (5 * age) + 5;
@@ -207,60 +301,175 @@
 
         const totalCalories = Math.round(bmr * activity);
 
+        const result = {
+            bmi: bmi,
+            bmiStatus: bmiStatus,
+            usedWeight: usedWeight.toFixed(1),
+            weightTypeLabel: weightTypeLabel,
+            bmr: Math.round(bmr),
+            tdee: totalCalories
+        };
+
+        displayDietPlan(name, result, disease);
+        generateMealSuggestions(disease, totalCalories);
+    }
+
+    /**
+     * Display the generated diet plan
+     */
+    function displayDietPlan(name, result, disease) {
         document.getElementById('dietResult').style.display = 'block';
         document.getElementById('patientInfoSummary').innerHTML = `
-            <b>الاسم:</b> ${name} | <b>BMI:</b> ${bmi} (${bmiStatus}) <br>
-            <b>${weightTypeLabel}:</b> ${usedWeight.toFixed(1)} كجم | 
-            <b>BMR:</b> ${Math.round(bmr)} سعرة | 
-            <b>السعرات الكلية:</b> ${totalCalories} سعرة/يوم
+            <strong>👤 الاسم:</strong> ${name} | 
+            <strong>📊 مؤشر كتلة الجسم (BMI):</strong> ${result.bmi} (${result.bmiStatus})<br>
+            <strong>⚖️ ${result.weightTypeLabel}:</strong> ${result.usedWeight} كجم | 
+            <strong>🔥 معدل الأيض الأساسي:</strong> ${result.bmr} سعرة حرارية | 
+            <strong>💪 السعرات الكلية:</strong> <span style="color: var(--accent); font-weight: bold; font-size: 1.1em;">${result.tdee}</span> سعرة حرارية/يوم
         `;
 
-        let plan = { title: "", nutrients: "", allowed: "", restricted: "", meals: "" };
-
-        if (disease === "hypertension") {
-            plan.title = "نظام DASH الغذائي";
-            plan.nutrients = "Carb 55% | Protein 18% | Low Sodium";
-            plan.allowed = "الموز، الكرفس، منتجات الألبان قليلة الدسم، الحبوب الكاملة، الأسماك.";
-            plan.restricted = "ملح الطعام، الأطعمة المعلبة، اللحوم الحمراء الدهنية.";
-            plan.meals = "إفطار: زبادي وتفاحة | غداء: سمك مشوي وسلطة خضراء | عشاء: شوربة عدس قليلة الملح.";
-        } else if (disease.includes("diabetes")) {
-            plan.title = "نظام ضبط مؤشر السكر";
-            plan.nutrients = "Carb 45% | Fiber 30g+ | Protein 25%";
-            plan.allowed = "البقوليات، الخضروات الورقية، خبز النخالة، المكسرات.";
-            plan.restricted = "السكر الأبيض، الخبز الأبيض، العصائر المحلاة.";
-            plan.meals = "إفطار: بيضتين مسلوقتين وخبز أسمر | غداء: صدر دجاج وفاصوليا خضراء | عشاء: جبنة قريش وخيار.";
-        } else if (disease === "heart_disease") {
-            plan.title = "نظام صحة القلب (Mediterranean)";
-            plan.nutrients = "Healthy Fats 35% | Carb 45% | Fiber High";
-            plan.allowed = "زيت الزيتون، الأفوكادو، السلمون، الجوز، التوتيات.";
-            plan.restricted = "الدهون المشبعة، السمن، الحلويات، المقليات.";
-            plan.meals = "إفطار: توست أسمر بلبنة وزعتر | غداء: معكرونة حبوب كاملة بالخضار | عشاء: سلطة تونة.";
-        } else {
-            plan.title = "نظام التغذية المتوازن";
-            plan.nutrients = "Carb 50% | Protein 20% | Fat 30%";
-            plan.allowed = "تنوع في كافة المجموعات الغذائية الطبيعية.";
-            plan.restricted = "المشروبات الغازية، الوجبات السريعة، الزيوت المهدرجة.";
-            plan.meals = "إفطار: جبنة مع شريحة توست | غداء: أرز مطهو ودجاج وخضار | عشاء: كوب زبادي بفاكهة.";
-        }
-
+        let plan = getDietPlanForDisease(disease);
+        
         document.getElementById('dietTitle').innerText = plan.title;
         document.getElementById('nutrientInfo').innerHTML = `<div class="nutrient-badge">${plan.nutrients}</div>`;
         document.getElementById('foodLists').innerHTML = `
-            <div class="allowed"><b>✅ المسموح:</b><br>${plan.allowed}</div>
-            <div class="restricted"><b>❌ الممنوع:</b><br>${plan.restricted}</div>
+            <div class="allowed">
+                <b>✅ المسموح:</b><br>
+                ${plan.allowed}
+            </div>
+            <div class="restricted">
+                <b>❌ الممنوع:</b><br>
+                ${plan.restricted}
+            </div>
         `;
-        document.getElementById('aiMeals').innerHTML = plan.meals;
+
+        // Store current plan for PDF export
+        currentPlan = {
+            name: name,
+            result: result,
+            disease: disease,
+            plan: plan,
+            timestamp: new Date().toLocaleString('ar-EG')
+        };
     }
 
+    /**
+     * Get diet plan details based on disease
+     */
+    function getDietPlanForDisease(disease) {
+        const plans = {
+            'hypertension': {
+                title: "نظام DASH الغذائي (خفض ضغط الدم)",
+                nutrients: "🥗 الكربوهيدرات 55% | 🍖 البروتين 18% | 🧂 ملح منخفض جداً",
+                allowed: "الموز، السبانخ، الكرفس، منتجات الألبان قليلة الدسم، الحبوب الكاملة، الأسماك الدهنية، الكيوي.",
+                restricted: "ملح الطعام، الأطعمة المعلبة، اللحوم الحمراء الدهنية، المشروبات الغازية، الأطعمة المالحة."
+            },
+            'diabetes_1': {
+                title: "نظام ضبط السكريات (النوع الأول)",
+                nutrients: "🌾 الكربوهيدرات 45% | 🍃 ألياف 30+غ | 🍖 البروتين 25%",
+                allowed: "البقوليات، الخضروات الورقية، خبز النخالة، المكسرات غير المملحة، التفاح، البرتقال.",
+                restricted: "السكر الأبيض، الخبز الأبيض، العصائر المحلاة، الحلويات، المشروبات الغازية، التمر."
+            },
+            'diabetes_2': {
+                title: "نظام التحكم بالوزن والسكر (النوع الثاني)",
+                nutrients: "🌾 الكربوهيدرات 45% | 🍃 ألياف 30+غ | 🍖 البروتين 25%",
+                allowed: "الفول، العدس، الخضروات الطازجة، الحبوب الكاملة، السمك، الدجاج بدون جلد.",
+                restricted: "السكريات المضافة، الخبز الأبيض، الفواكه المجففة، العصائر المركزة، الأرز الأبيض."
+            },
+            'heart_disease': {
+                title: "نظام صحة القلب (Mediterranean)",
+                nutrients: "🫒 دهون صحية 35% | 🌾 كربوهيدرات 45% | 🍃 ألياف عالية",
+                allowed: "زيت الزيتون، الأفوكادو، السلمون، الجوز، اللوز، التوتيات، الرمان، الخضار الورقية.",
+                restricted: "الدهون المشبعة، السمن، اللحوم الحمراء الدهنية، الحلويات، المقليات، الملح الزائد."
+            },
+            'diabetes_heart': {
+                title: "نظام متوازن للسكر وأمراض القلب",
+                nutrients: "🫒 دهون صحية 30% | 🌾 كربوهيدرات 45% | 🍖 بروتين 25%",
+                allowed: "السمك الدهني، زيت الزيتون، المكسرات، البقوليات، الخضروات، التفاح، الكيوي.",
+                restricted: "السكريات المضافة، الدهون المشبعة، الملح الزائد، المعلبات، الأطعمة المقلية."
+            },
+            'none': {
+                title: "نظام التغذية المتوازن - لشخص صحي",
+                nutrients: "🌾 كربوهيدرات 50% | 🍖 بروتين 20% | 🫒 دهون 30%",
+                allowed: "تنوع في جميع المجموعات الغذائية الطبيعية: الفواكه، الخضار، الحبوب، الألبان، البروتينات.",
+                restricted: "المشروبات الغازية، الوجبات السريعة، الزيوت المهدرجة، الحلويات المفرطة، الأطعمة شديدة المعالجة."
+            }
+        };
+
+        return plans[disease] || plans['none'];
+    }
+
+    /**
+     * Generate meal suggestions
+     */
+    function generateMealSuggestions(disease, tdee) {
+        const mealData = {
+            action: 'generateMeals',
+            disease: disease,
+            tdee: tdee
+        };
+
+        fetch('api.php?action=generateMeals', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+            },
+            body: new URLSearchParams(mealData)
+        })
+        .then(response => response.json())
+        .then(result => {
+            if (result.success) {
+                displayMeals(result.meals);
+            }
+        })
+        .catch(error => {
+            console.error('Meal generation error:', error);
+            displayMealsFallback(disease);
+        });
+    }
+
+    /**
+     * Display generated meals
+     */
+    function displayMeals(meals) {
+        const mealsHTML = `
+            <div style="line-height: 2;">
+                <p><strong>🌅 الإفطار:</strong> ${meals.breakfast}</p>
+                <p><strong>🍽️ الغداء:</strong> ${meals.lunch}</p>
+                <p><strong>🌙 العشاء:</strong> ${meals.dinner}</p>
+                <p><strong>🍎 الوجبات الخفيفة:</strong> ${meals.snack1} و ${meals.snack2}</p>
+            </div>
+        `;
+        document.getElementById('aiMeals').innerHTML = mealsHTML;
+    }
+
+    /**
+     * Fallback meal display
+     */
+    function displayMealsFallback(disease) {
+        const fallbackMeals = {
+            'hypertension': 'إفطار: زبادي وتفاحة | غداء: سمك مشوي وسلطة خضراء | عشاء: شوربة عدس قليلة الملح.',
+            'diabetes_1': 'إفطار: بيضتين مسلوقتين وخبز أسمر | غداء: صدر دجاج وفاصوليا خضراء | عشاء: جبنة قريش وخيار.',
+            'diabetes_2': 'إفطار: جبنة قريش ولوز | غداء: سمك مشوي مع ورقيات | عشاء: دجاج مسلوق مع خضار.',
+            'heart_disease': 'إفطار: توست أسمر بزيت زيتون | غداء: معكرونة حبوب كاملة | عشاء: سلطة تونة.',
+            'diabetes_heart': 'إفطار: بيض مسلوق مع خبز أسمر | غداء: سمك السلمون مع قمح | عشاء: جبنة قريش.',
+            'none': 'إفطار: جبنة مع توست | غداء: أرز ودجاج وخضار | عشاء: زبادي بفاكهة.'
+        };
+
+        const meals = fallbackMeals[disease] || fallbackMeals['none'];
+        document.getElementById('aiMeals').innerHTML = `<p>${meals}</p>`;
+    }
+
+    /**
+     * Save diet plan as PDF
+     */
     function saveAsPDF() {
         const report = document.getElementById('pdfContent');
-        // guard against empty/hidden content
+        
         if (!report || report.textContent.trim() === "") {
             alert('الرجاء إنشاء الخطة أولاً ثم حاول حفظ PDF.');
             return;
         }
 
-        // html2pdf has problems when the element is hidden; clone and force visibility
         const clone = report.cloneNode(true);
         clone.style.display = 'block';
         clone.style.position = 'absolute';
@@ -269,23 +478,48 @@
 
         const opt = {
             margin: 10,
-            filename: 'NutriScholar_Report.pdf',
+            filename: `NutriScholar_${currentPlan?.name || 'Report'}_${new Date().toISOString().split('T')[0]}.pdf`,
             image: { type: 'jpeg', quality: 0.98 },
             html2canvas: { scale: 2, useCORS: true },
             jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
         };
 
-        // use callback style and remove clone when done
         html2pdf(clone, opt)
             .then(() => {
                 document.body.removeChild(clone);
+                alert('✅ تم حفظ PDF بنجاح!');
             })
             .catch(err => {
-                console.error('PDF generation error', err);
-                alert('حدث خطأ أثناء إنشاء PDF. تحقق من وحدة التحكم.');
+                console.error('PDF generation error:', err);
+                alert('❌ حدث خطأ أثناء إنشاء PDF. تحقق من وحدة التحكم.');
                 document.body.removeChild(clone);
             });
     }
+
+    /**
+     * Print diet plan
+     */
+    function printPlan() {
+        const report = document.getElementById('pdfContent');
+        
+        if (!report || report.textContent.trim() === "") {
+            alert('الرجاء إنشاء الخطة أولاً ثم حاول الطباعة.');
+            return;
+        }
+
+        const printWindow = window.open('', '_blank');
+        printWindow.document.write(document.documentElement.outerHTML);
+        printWindow.document.close();
+        
+        setTimeout(() => {
+            printWindow.print();
+        }, 500);
+    }
+
+    // Initialize on page load
+    document.addEventListener('DOMContentLoaded', function() {
+        console.log('NutriScholar Application Started');
+    });
 </script>
 
 </body>
