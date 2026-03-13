@@ -508,8 +508,8 @@
             return;
         }
 
-        // Store report HTML temporarily so the export page can load it
-        localStorage.setItem('nutriScholarReportHtml', report.outerHTML);
+        // Store report text content so the export page can load it
+        localStorage.setItem('nutriScholarReportHtml', report.textContent);
         window.location.href = 'word.html';
     }
 
