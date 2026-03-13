@@ -614,3 +614,24 @@ hr {
 .site-footer strong {
     color: var(--accent);
 }
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+    width: 12px;
+}
+
+::-webkit-scrollbar-track {
+    background: rgba(207, 225, 185, 0.3);
+    border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb {
+    background: linear-gradient(135deg, var(--secondary), var(--accent));
+    border-radius: 10px;
+    border: 2px solid rgba(207, 225, 185, 0.5);
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: linear-gradient(135deg, var(--accent), var(--secondary));
+    box-shadow: 0 0 6px rgba(52, 152, 219, 0.4);
+}
