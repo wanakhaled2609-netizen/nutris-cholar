@@ -58,8 +58,8 @@
             return;
         }
 
-        // Wrap in a minimal HTML document so Word will open it properly
-        const header = '<!DOCTYPE html><html lang="ar" dir="rtl"><head><meta charset="UTF-8"><title>NutriScholar Report</title></head><body>';
+        // Wrap in a minimal HTML document with normal font styling
+        const header = '<!DOCTYPE html><html lang="ar" dir="rtl"><head><meta charset="UTF-8"><title>NutriScholar Report</title><style>body { font-family: Arial, sans-serif; font-size: 12pt; line-height: 1.5; direction: rtl; }</style></head><body>';
         const footer = '</body></html>';
         const fullHtml = header + content + footer;
 
@@ -81,7 +81,7 @@
 </script>
 
 <footer class="site-footer">
-    <p>تم تطوير هذا الموقع بواسطة  <strong>Rawan</strong> | مساعدة من <strong>C0v3</strong> ✨</p>
+    <p>تم تطوير هذا الموقع بواسطة  <strong>Rawan ©</strong> | مساعدة من <strong>C0v3</strong> ✨</p>
 </footer>
 
 </body>
