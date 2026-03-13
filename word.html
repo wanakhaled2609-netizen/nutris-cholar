@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NutriScholar | تصدير إلى Word</title>
+
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;700&display=swap" rel="stylesheet">
+
+    <!-- External CSS -->
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<div class="container">
+    <div class="portal patient-portal">
+        <h2>📄 تصدير التقرير إلى Word</h2>
+        <p>يمكنك لصق المحتوى الذي تريد حفظه في ملف Word ثم الضغط على زر "حفظ كملف Word".</p>
+
+        <div class="form-group">
+            <label>📋 المحتوى</label>
+            <textarea id="wordContent" placeholder="ألصق هنا تقريرك أو النص..." rows="12"></textarea>
+        </div>
+
+        <button class="sparkle-btn" onclick="saveAsWord()">
+            💾 حفظ كملف Word
+            <span class="stars" aria-hidden="true">✨✨✨</span>
+        </button>
+
+        <p style="margin-top: 20px;">
+            <a href="index.html" style="color: var(--accent); text-decoration: underline;">⬅️ العودة إلى الصفحة الرئيسية</a>
+        </p>
+
+        <div id="notice" class="alert-box" style="display:none; margin-top: 15px;"></div>
+    </div>
+</div>
+
+<script>
+    // Load any previously stored report from the main page
+    document.addEventListener('DOMContentLoaded', () => {
+        const stored = localStorage.getItem('nutriScholarReportHtml');
+        if (stored) {
+            document.getElementById('wordContent').value = stored;
+            // Clear it so we don't keep stale data
+            localStorage.removeItem('nutriScholarReportHtml');
+        }
+    });
+
+    function saveAsWord() {
+        const content = document.getElementById('wordContent').value.trim();
+        const notice = document.getElementById('notice');
+
+        if (!content) {
+            notice.innerText = 'الرجاء إدخال المحتوى أولاً ثم حاول حفظ Word.';
+            notice.className = 'alert-box danger';
+            notice.style.display = 'block';
+            return;
+        }
+
+        // Wrap in a minimal HTML document so Word will open it properly
+        const header = '<!DOCTYPE html><html lang="ar" dir="rtl"><head><meta charset="UTF-8"><title>NutriScholar Report</title></head><body>';
+        const footer = '</body></html>';
+        const fullHtml = header + content + footer;
+
+        const blob = new Blob([fullHtml], { type: 'application/msword;charset=utf-8' });
+        const fileName = `NutriScholar_Report_${new Date().toISOString().split('T')[0]}.doc`;
+
+        const link = document.createElement('a');
+        link.href = URL.createObjectURL(blob);
+        link.download = fileName;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        URL.revokeObjectURL(link.href);
+
+        notice.innerText = '✅ تم إنشاء ملف Word ويمكنك العثور عليه في التنزيلات.';
+        notice.className = 'alert-box success';
+        notice.style.display = 'block';
+    }
+</script>
+
+<footer class="site-footer">
+    <p>تم تطوير هذا الموقع بواسطة  <strong>Rawan</strong> | مساعدة من <strong>C0v3</strong> ✨</p>
+</footer>
+
+</body>
+</html>
