@@ -61,7 +61,7 @@
         // Wrap in a minimal HTML document with normal font styling
         const header = '<!DOCTYPE html><html lang="ar" dir="rtl"><head><meta charset="UTF-8"><title>NutriScholar Report</title><style>body { font-family: Arial, sans-serif; font-size: 12pt; line-height: 1.5; direction: rtl; }</style></head><body>';
         const footer = '</body></html>';
-        const fullHtml = header + content + footer;
+        const fullHtml = '\ufeff' + header + content + footer;
 
         const blob = new Blob([fullHtml], { type: 'application/msword;charset=utf-8' });
         const fileName = `NutriScholar_Report_${new Date().toISOString().split('T')[0]}.doc`;
