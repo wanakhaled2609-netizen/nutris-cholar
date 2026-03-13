@@ -127,8 +127,8 @@
             
             <button class="btn-pdf" onclick="saveAsPDF()">📥 حفظ التقرير كـ PDF</button>
             <button class="btn-word" onclick="exportToWordPage()">📄 تصدير إلى Word</button>
-            <button class="btn-save" onclick="saveDietPlan()">💾 حفظ الخطة في قاعدة البيانات</button>
             <button style="background-color: #9b59b6; margin-top: 10px;" onclick="printPlan()">🖨️ طباعة التقرير</button>
+            <button style="background-color: #e67e22; margin-top: 10px;" onclick="window.open('meals.html', '_blank')">📋 جدول الوجبات اليومية</button>
         </div>
     </div>
 </div>
@@ -476,13 +476,17 @@
         clone.style.display = 'block';
         clone.style.position = 'absolute';
         clone.style.left = '-9999px';
+        clone.style.width = '210mm'; // A4 width
+        clone.style.maxWidth = '210mm';
+        clone.style.padding = '20mm';
+        clone.style.boxSizing = 'border-box';
         document.body.appendChild(clone);
 
         const opt = {
-            margin: 10,
+            margin: [15, 15, 15, 15], // top, left, bottom, right
             filename: `NutriScholar_${currentPlan?.name || 'Report'}_${new Date().toISOString().split('T')[0]}.pdf`,
             image: { type: 'jpeg', quality: 0.98 },
-            html2canvas: { scale: 2, useCORS: true },
+            html2canvas: { scale: 2, useCORS: true, letterRendering: true },
             jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
         };
 
@@ -525,11 +529,29 @@
         }
 
         const printWindow = window.open('', '_blank');
-        printWindow.document.write(document.documentElement.outerHTML);
+        printWindow.document.write(`
+            <!DOCTYPE html>
+            <html lang="ar" dir="rtl">
+            <head>
+                <meta charset="UTF-8">
+                <title>طباعة التقرير - NutriScholar</title>
+                <style>
+                    body { font-family: Arial, sans-serif; margin: 20px; direction: rtl; }
+                    h3, h4 { color: #2c3e50; }
+                    .food-list { margin: 10px 0; }
+                    hr { border: none; border-top: 1px solid #ddd; margin: 20px 0; }
+                </style>
+            </head>
+            <body>
+                ${report.innerHTML}
+            </body>
+            </html>
+        `);
         printWindow.document.close();
         
         setTimeout(() => {
             printWindow.print();
+            printWindow.close();
         }, 500);
     }
 
