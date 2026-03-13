@@ -476,21 +476,26 @@
         clone.style.display = 'block';
         clone.style.position = 'absolute';
         clone.style.left = '-9999px';
-        clone.style.width = '210mm'; // A4 width
+        clone.style.top = '0';
+        clone.style.width = '210mm';
         clone.style.maxWidth = '210mm';
         clone.style.padding = '20mm';
         clone.style.boxSizing = 'border-box';
+        clone.style.backgroundColor = 'white';
+        clone.style.fontFamily = 'Arial, sans-serif';
+        clone.style.direction = 'rtl';
         document.body.appendChild(clone);
 
         const opt = {
-            margin: [15, 15, 15, 15], // top, left, bottom, right
+            margin: [15, 15, 15, 15],
             filename: `NutriScholar_${currentPlan?.name || 'Report'}_${new Date().toISOString().split('T')[0]}.pdf`,
             image: { type: 'jpeg', quality: 0.98 },
             html2canvas: { scale: 2, useCORS: true, letterRendering: true },
             jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
         };
 
-        html2pdf(clone, opt)
+        // Use correct html2pdf API
+        html2pdf().set(opt).from(clone).save()
             .then(() => {
                 document.body.removeChild(clone);
                 alert('✅ تم حفظ PDF بنجاح!');
