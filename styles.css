@@ -37,7 +37,7 @@ body {
     padding: 40px 20px;
     direction: rtl;
     position: relative;
-    overflow: hidden;
+    overflow-y: auto;
 }
 
 body::before {
@@ -548,7 +548,7 @@ hr {
     transition: opacity 0.2s ease, transform 0.3s ease;
 }
 
-.sparkle-btn:hover .stars {
+.sparkle-btn:active .stars {
     display: block;
     opacity: 1;
     transform: translate(-50%, -50%) scale(1.1);
@@ -560,7 +560,7 @@ hr {
     50% { transform: translate(-55%, -55%) scale(1.25); opacity: 0.7; }
 }
 
-.sparkle-btn:hover .stars {
+.sparkle-btn:active .stars {
     animation: sparkle 0.9s ease-in-out infinite;
 }
 
