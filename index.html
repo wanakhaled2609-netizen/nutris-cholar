@@ -126,6 +126,8 @@
             </div>
             
             <button class="btn-pdf" onclick="saveAsPDF()">📥 حفظ التقرير كـ PDF</button>
+            <button class="btn-word" onclick="exportToWordPage()">📄 تصدير إلى Word</button>
+            <button class="btn-save" onclick="saveDietPlan()">💾 حفظ الخطة في قاعدة البيانات</button>
             <button style="background-color: #9b59b6; margin-top: 10px;" onclick="printPlan()">🖨️ طباعة التقرير</button>
         </div>
     </div>
@@ -497,6 +499,21 @@
     }
 
     /**
+     * Export the current report to a separate Word-export page
+     */
+    function exportToWordPage() {
+        const report = document.getElementById('pdfContent');
+        if (!report || report.textContent.trim() === "") {
+            alert('الرجاء إنشاء الخطة أولاً ثم حاول التصدير إلى Word.');
+            return;
+        }
+
+        // Store report HTML temporarily so the export page can load it
+        localStorage.setItem('nutriScholarReportHtml', report.outerHTML);
+        window.location.href = 'word.html';
+    }
+
+    /**
      * Print diet plan
      */
     function printPlan() {
@@ -516,11 +533,54 @@
         }, 500);
     }
 
+    /**
+     * Save diet plan to database
+     */
+    function saveDietPlan() {
+        if (!currentPlan) {
+            alert('الرجاء إنشاء الخطة أولاً ثم حاول الحفظ.');
+            return;
+        }
+
+        const saveData = {
+            action: 'savePlan',
+            name: currentPlan.name,
+            result: currentPlan.result,
+            disease: currentPlan.disease,
+            plan: currentPlan.plan,
+            timestamp: currentPlan.timestamp
+        };
+
+        fetch('api.php?action=savePlan', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+            },
+            body: new URLSearchParams(saveData)
+        })
+        .then(response => response.json())
+        .then(result => {
+            if (result.success) {
+                alert('✅ ' + result.message);
+            } else {
+                alert('❌ ' + result.message);
+            }
+        })
+        .catch(error => {
+            console.error('Save error:', error);
+            alert('❌ حدث خطأ أثناء الحفظ.');
+        });
+    }
+
     // Initialize on page load
     document.addEventListener('DOMContentLoaded', function() {
         console.log('NutriScholar Application Started');
     });
 </script>
+
+<footer class="site-footer">
+    <p>تم تطوير هذا الموقع بواسطة  <strong>Rawan</strong> | مساعدة من <strong>C0v3</strong> ✨</p>
+</footer>
 
 </body>
 </html>
