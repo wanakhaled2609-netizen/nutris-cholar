@@ -18,6 +18,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
 // Get the action from request
 $action = isset($_GET['action']) ? $_GET['action'] : (isset($_POST['action']) ? $_POST['action'] : '');
 
+// Database connection
+$db = new PDO('sqlite:plans.db');
+$db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+
+// Create table if not exists
+$db->exec("CREATE TABLE IF NOT EXISTS diet_plans (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    patient_name TEXT,
+    data TEXT,
+    timestamp DATETIME DEFAULT CURRENT_TIMESTAMP
+)");
+
 try {
     switch ($action) {
         case 'calculateNutrition':
@@ -27,7 +39,10 @@ try {
             echo json_encode(generateMeals($_POST));
             break;
         case 'savePlan':
-            echo json_encode(saveDietPlan($_POST));
+            echo json_encode(saveDietPlan($db, $_POST));
+            break;
+        case 'getPlans':
+            echo json_encode(getDietPlans($db));
             break;
         case 'validateInputs':
             echo json_encode(validateInputs($_POST));
@@ -333,36 +348,44 @@ function validateInputs($data) {
 }
 
 /**
- * Save diet plan to database (optional)
+ * Save diet plan to database
  */
-function saveDietPlan($data) {
-    // This is a placeholder for database integration
-    // You can extend this to save to a database
-
-    $filename = 'plans_' . date('Y-m-d_H-i-s') . '_' . md5(microtime()) . '.json';
-    $filepath = __DIR__ . '/saved_plans/' . $filename;
-
-    // Create directory if not exists
-    if (!is_dir(__DIR__ . '/saved_plans')) {
-        mkdir(__DIR__ . '/saved_plans', 0755, true);
-    }
-
-    $planData = [
-        'timestamp' => date('Y-m-d H:i:s'),
-        'patientName' => $data['name'] ?? 'Unknown',
-        'data' => $data
-    ];
-
-    if (file_put_contents($filepath, json_encode($planData, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE))) {
+function saveDietPlan($db, $data) {
+    try {
+        $stmt = $db->prepare("INSERT INTO diet_plans (patient_name, data) VALUES (?, ?)");
+        $stmt->execute([
+            $data['name'] ?? 'Unknown',
+            json_encode($data, JSON_UNESCAPED_UNICODE)
+        ]);
+        $planId = $db->lastInsertId();
         return [
             'success' => true,
-            'message' => 'تم حفظ الخطة بنجاح',
-            'planId' => basename($filename, '.json')
+            'message' => 'تم حفظ الخطة بنجاح في قاعدة البيانات',
+            'planId' => $planId
         ];
-    } else {
+    } catch (Exception $e) {
         return [
             'success' => false,
-            'message' => 'فشل حفظ الخطة'
+            'message' => 'فشل حفظ الخطة: ' . $e->getMessage()
+        ];
+    }
+}
+
+/**
+ * Get all saved diet plans
+ */
+function getDietPlans($db) {
+    try {
+        $stmt = $db->query("SELECT id, patient_name, data, timestamp FROM diet_plans ORDER BY timestamp DESC");
+        $plans = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        return [
+            'success' => true,
+            'plans' => $plans
+        ];
+    } catch (Exception $e) {
+        return [
+            'success' => false,
+            'message' => 'فشل استرجاع الخطط: ' . $e->getMessage()
         ];
     }
 }
